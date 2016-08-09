@@ -2,17 +2,50 @@ package crypto
 
 object Project1 {
 
-	type ByteStream = Stream[Byte]
+	type ByteStream = Stream[Int]
 
-	def hexStringToStream(str: String): ByteStream = str.sliding(2,2).toStream.map(Integer.parseInt(_, 16).toByte)
+	def hexStringToStream(str: String): ByteStream = str.sliding(2,2).toStream.map(Integer.parseInt(_, 16))
 	
-	def toByteStream(str: String): ByteStream = str.toStream.map{c => c.toByte}
+	def toByteStream(str: String): ByteStream = str.toStream.map{_.toInt}
 
     def xorStream(bs1: ByteStream, bs2: ByteStream): ByteStream = 
-    	if (bs1.isEmpty || bs2.isEmpty) Stream.Empty else (bs1.head ^ bs2.head).toByte #:: xorStream(bs1.tail, bs2.tail)
+    	if (bs1.isEmpty || bs2.isEmpty) Stream.Empty else (bs1.head ^ bs2.head) #:: xorStream(bs1.tail, bs2.tail)
 
     def xorStream(str1: String, str2: String): ByteStream = xorStream(hexStringToStream(str1), hexStringToStream(str2))
 
+    def bsToString(bs: ByteStream): String = bs.map(_.toChar).mkString
+
+    implicit class IntToHexxx(val i: Int) extends AnyVal {
+	  def h = Integer.toHexString(i)
+    }
+
+}
+
+object LetterXorTable {
+	val table = for {
+    	i <- ('a' to 'y')
+    	j <-(i+1 to 'z')
+    } yield (Set(i, j.toChar), i^j)
+
+    def apply(i: Int) = {
+    	table.filter{case(_, j) => i == j}
+    }
+
+    def possibleValues(i: Int):Set[Char] = this(i).flatMap{case(s, _) => s}.toSet
+
+    def pairedValue(i: Int, c: Char):Set[Char] = this(i).map{case(s, _) => s}.filter{s => s(c)}.
+    headOption.map(_.filterNot(_==c)).getOrElse(Set())
+
+
+    def solve(w:Int,x:Int,y:Int,z:Int) = for {
+     a <- possibleValues(w^x)
+     b <- pairedValue(w^x, a)
+     c <- pairedValue(x^y, b)
+     d <- pairedValue(y^z, c) 
+     if this(w^y).map{case(s, _) => s}.contains(Set(a,c))
+     if this(w^z).map{case(s, _) => s}.contains(Set(a,d))
+     if this(x^z).map{case(s, _) => s}.contains(Set(b,d))
+     } yield(a,b,c,d)
 }
 
 object CypherText {
@@ -37,4 +70,13 @@ object CypherText {
 	val ct10 = "466d06ece998b7a2fb1d464fed2ced7641ddaa3cc31c9941cf110abbf409ed39598005b3399ccfafb61d0315fca0a314be138a9f32503bedac8067f03adbf3575c3b8edc9ba7f537530541ab0f9f3cd04ff50d66f1d559ba520e89a2cb2a83"
 
 	val ct11 = "32510ba9babebbbefd001547a810e67149caee11d945cd7fc81a05e9f85aac650e9052ba6a8cd8257bf14d13e6f0a803b54fde9e77472dbff89d71b57bddef121336cb85ccb8f3315f4b52e301d16e9f52f904"
+
+    val key  = "66396e89c9dbd8cc9874352acd6395102eafce78aa7fed28a07f6bc98d29c50b69b0339a19f8aa401a9c6d708f80c066c763fef0123148cdd8e802d05ba98777335daefcecd59c433a6b268b60bf4ef03c9a61"
+	val key1 = "653900890000"
+     
+	val allCT = List(ct1,ct2,ct3,ct4,ct5,ct6,ct7,ct8,ct9,ct10,ct11)
+
+	def decode = allCT.foreach(c => println(bsToString(xorStream(c,key))))
 }
+
+

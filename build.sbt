@@ -13,6 +13,7 @@ settings(
   publishTo := Some(Resolver.file("Local", Path.userHome / ".m2" / "repository" asFile)),
 
   initialCommands in console := """
-    |import crypto._
+    |import crypto.Project1._
+    |import crypto.CypherText._
     |""".stripMargin
 )
