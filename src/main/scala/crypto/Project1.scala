@@ -2,14 +2,14 @@ package crypto
 
 object Project1 {
 
-	type ByteStream = Stream[Int]
+	type ByteStream = Stream[Short]
 
-	def hexStringToStream(str: String): ByteStream = str.sliding(2,2).toStream.map(Integer.parseInt(_, 16))
+	def hexStringToStream(str: String): ByteStream = str.sliding(2,2).toStream.map(Integer.parseInt(_, 16).toShort)
 	
-	def toByteStream(str: String): ByteStream = str.toStream.map{_.toInt}
+	def toByteStream(str: String): ByteStream = str.toStream.map{_.toShort}
 
     def xorStream(bs1: ByteStream, bs2: ByteStream): ByteStream = 
-    	if (bs1.isEmpty || bs2.isEmpty) Stream.Empty else (bs1.head ^ bs2.head) #:: xorStream(bs1.tail, bs2.tail)
+    	if (bs1.isEmpty || bs2.isEmpty) Stream.Empty else (bs1.head ^ bs2.head).toShort #:: xorStream(bs1.tail, bs2.tail)
 
     def xorStream(str1: String, str2: String): ByteStream = xorStream(hexStringToStream(str1), hexStringToStream(str2))
 
