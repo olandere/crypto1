@@ -40,6 +40,23 @@ object CBC_Decrypt {
   }
 }
 
+object CTR_Encrypt {
+
+  def apply(key: String, pt: String, iv: String): Seq[Byte] = {
+    val cipher = new AESEngine()
+    cipher.init(true, new KeyParameter(key.ba))
+    var ivbi = BigInt(iv.ba)
+    val blocks = pt.toCharArray.sliding(16, 16)
+    val out: Array[Byte] = Array.fill[Byte](16)(0)
+    ivbi.toByteArray ++ blocks.flatMap {
+      block =>
+        cipher.processBlock(ivbi.toByteArray, 0, out, 0)
+        ivbi += 1
+        block.zip(out).map { case (a, b) => ((a ^ b) & 0xff).toByte }.toList
+    }.toList
+  }
+}
+
 object CTR_Decrypt {
 
   def apply(key: String, ct: String): Seq[Byte] = {
