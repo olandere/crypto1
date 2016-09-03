@@ -7,7 +7,8 @@ settings(
   scalacOptions ++= Seq("-deprecation", "-optimise", "-feature", "-Yinline-warnings"),
 
   libraryDependencies ++= Seq(
-	"org.bouncycastle" % "bcprov-jdk15on" % "1.54"
+	"org.bouncycastle" % "bcprov-jdk15on" % "1.54",
+	"org.scalaj" %% "scalaj-http" % "2.3.0"
  ),
 
   publishMavenStyle := true,
@@ -16,5 +17,6 @@ settings(
   initialCommands in console := """
     |import crypto.Project1._
     |import crypto.CypherText._
+    |import crypto.Project4._
     |""".stripMargin
 )
