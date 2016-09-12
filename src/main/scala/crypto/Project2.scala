@@ -22,10 +22,11 @@ object Project2 {
 }
 
 object CBC_Encrypt {
-	
+
   def pad(pt: String) = {
     val len = 16 - pt.length % 16
-    if (len == 16) pt else {
+    if (len == 16) pt
+    else {
       pt + ((len.toChar + "") * len)
     }
   }
@@ -33,7 +34,7 @@ object CBC_Encrypt {
   def apply(key: String, pt: String, iv: String): Seq[Byte] = {
     val cipher = new AESEngine()
     cipher.init(true, new KeyParameter(key.ba))
-    var ivb = iv.ba.map(_.toByte)
+    var ivb = iv.ba
     val blocks = pad(pt).toCharArray.map(_.toByte).sliding(16, 16)
     val out: Array[Byte] = Array.fill[Byte](16)(0)
     ivb ++ blocks.flatMap {

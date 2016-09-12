@@ -37,11 +37,11 @@ object Project4 {
 
   @tailrec
   def decryptBlock(pad: Int, pt: String): String = {
-	if (pad > 16) pt else {
-	val byte = attackBlocks(blocks(0), pad, pt).map{ct => sendBlock(iv+ct+blocks(1))}.zipWithIndex.filter{case(a,b)=>a.code==404}.head._2
-	decryptBlock(pad+1, f"$byte%02x$pt")
+	  if (pad > 16) pt else {
+	    val byte = attackBlocks(blocks(0), pad, pt).map{ct => sendBlock(iv+ct+blocks(1))}.zipWithIndex.filter{case(a,b)=>a.code==404}.head._2
+	    decryptBlock(pad+1, f"$byte%02x$pt")
+    }
   }
-}
   //attackBlocks(blocks(0), 7, "697368204f73").map{ct => sendBlock(iv+ct+blocks(1))}.zipWithIndex.filter{case(a,b)=>a.code==404}.head
 
 val pt0 = "546865204d6167696320576f72647320"

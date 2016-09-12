@@ -7,8 +7,9 @@ settings(
   scalacOptions ++= Seq("-deprecation", "-optimise", "-feature", "-Yinline-warnings"),
 
   libraryDependencies ++= Seq(
-	"org.bouncycastle" % "bcprov-jdk15on" % "1.54",
-	"org.scalaj" %% "scalaj-http" % "2.3.0"
+    "org.bouncycastle" % "bcprov-jdk15on" % "1.55",
+    "org.scalaj" %% "scalaj-http" % "2.3.0",
+    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
  ),
 
   publishMavenStyle := true,
